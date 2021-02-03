@@ -7,6 +7,10 @@ inputs:
   app-base-url:
     description: "Base domain for your PR apps"
     required: true
+  append-pr-string:
+    description: "Boolean indicating whether or not to append '/pr-${pull_request.number}-${repository.name}' to the URL to register with Auth0"
+    default: "true"
+    required: false
   append-callback-string:
     description: "Boolean indicating whether or not to append '/callback' to the URL to register with Auth0"
     default: "true"
