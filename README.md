@@ -7,6 +7,7 @@ We use this to whitelist and then remove callback and logout URLs with Auth0 for
 | Input                            | Description                                                                                                     | Required | Type     | Default       |
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------- | -------- | -------- | ------------- |
 | `app-base-url`                   | Base domain for your PR apps. E.g `https://subdomain.our-acceptance-env.com`                                    | `true`   | `String` | n/a           |
+| `append-pr-string`               | Boolean indicating whether or not to append '/pr-${pull_request.number}-${repository.name}' to the URL to register with Auth0  | `false` | `string`  | `'true'`  |
 | `append-callback-string`         | Boolean indicating whether or not to append '/callback' to the URL to register with Auth0                       | `false`  | `String` | `'true'`      |
 | `auth0-application-id`           | App ID we are going to whitelist URLs for                                                                       | `true`   | `String` | n/a           |
 | `auth0-management-client-secret` | Client secret obtained from Auth0                                                                               | `true`   | `String` | n/a           |

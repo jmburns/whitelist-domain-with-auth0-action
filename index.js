@@ -1,6 +1,6 @@
-const github = require("@actions/github");
-const core = require("@actions/core");
-const ManagementClient = require("auth0").ManagementClient;
+const github = require('@actions/github');
+const core = require('@actions/core');
+const ManagementClient = require('auth0').ManagementClient;
 
 (async () => {
   try {
@@ -8,18 +8,15 @@ const ManagementClient = require("auth0").ManagementClient;
     //
     // ─── INPUTS ─────────────────────────────────────────────────────────────────────
     //
-    const appBaseUrl = core.getInput("app-base-url");
-    const appendCallbackUrl = core.getInput("append-callback-string");
-    const appendLogoutUrl = core.getInput("append-logout-string");
-    const authZeroApplicationId = core.getInput("auth0-application-id");
-    const authZeroManagementClientSecret = core.getInput(
-      "auth0-management-client-secret"
-    );
-    const authZeroManagementClientId = core.getInput(
-      "auth0-management-client-id"
-    );
-    const authZeroManagementDomain = core.getInput("auth0-management-domain");
-    const command = core.getInput("command");
+    const appBaseUrl = core.getInput('app-base-url');
+    const appendPrUrl = core.getInput('append-pr-string');
+    const appendCallbackUrl = core.getInput('append-callback-string');
+    const appendLogoutUrl = core.getInput('append-logout-string');
+    const authZeroApplicationId = core.getInput('auth0-application-id');
+    const authZeroManagementClientSecret = core.getInput('auth0-management-client-secret');
+    const authZeroManagementClientId = core.getInput('auth0-management-client-id');
+    const authZeroManagementDomain = core.getInput('auth0-management-domain');
+    const command = core.getInput('command');
     //
     // ─── AUTH0 SETUP ────────────────────────────────────────────────────────────────
     //
@@ -27,7 +24,7 @@ const ManagementClient = require("auth0").ManagementClient;
       domain: authZeroManagementDomain,
       clientId: authZeroManagementClientId,
       clientSecret: authZeroManagementClientSecret,
-      scope: "read:clients update:clients",
+      scope: 'read:clients update:clients',
     });
     const apiParams = {
       client_id: authZeroApplicationId,
@@ -36,26 +33,22 @@ const ManagementClient = require("auth0").ManagementClient;
     //
     // ─── URLS ───────────────────────────────────────────────────────────────────────
     //
-    const prUrl = `${appBaseUrl}/pr-${pull_request.number}-${repository.name}`;
+    const prUrl = appendPrUrl === 'true' ? `${appBaseUrl}/pr-${pull_request.number}-${repository.name}` : appBaseUrl;
     let callbackUrl = prUrl;
-    if (appendCallbackUrl === "true") {
+    if (appendCallbackUrl === 'true') {
       callbackUrl = `${prUrl}/callback`;
     }
     let logoutUrl = prUrl;
-    if (appendLogoutUrl === "true") {
+    if (appendLogoutUrl === 'true') {
       logoutUrl = `${prUrl}/logout`;
     }
 
     const callbackIndex = authZeroApplication.callbacks.indexOf(callbackUrl);
-    const logoutIndex = authZeroApplication.allowed_logout_urls.indexOf(
-      logoutUrl
-    );
+    const logoutIndex = authZeroApplication.allowed_logout_urls.indexOf(logoutUrl);
 
-    if (command === "whitelist") {
+    if (command === 'whitelist') {
       if (callbackIndex < 0) {
-        console.log(
-          `Adding ${callbackUrl} to ${authZeroApplication.name} callbacks`
-        );
+        console.log(`Adding ${callbackUrl} to ${authZeroApplication.name} callbacks`);
         authZeroApplication.callbacks.push(callbackUrl);
         await managementClient.clients.update(apiParams, {
           callbacks: authZeroApplication.callbacks,
@@ -63,15 +56,13 @@ const ManagementClient = require("auth0").ManagementClient;
       }
 
       if (logoutIndex < 0) {
-        console.log(
-          `Adding ${logoutUrl} to ${authZeroApplication.name} logouts`
-        );
+        console.log(`Adding ${logoutUrl} to ${authZeroApplication.name} logouts`);
         authZeroApplication.allowed_logout_urls.push(logoutUrl);
         await managementClient.clients.update(apiParams, {
           allowed_logout_urls: authZeroApplication.allowed_logout_urls,
         });
       }
-    } else if (command === "remove") {
+    } else if (command === 'remove') {
       if (callbackIndex >= 0) {
         console.log(`Removing ${callbackUrl} from ${authZeroApplication.name}`);
         authZeroApplication.callbacks.splice(callbackIndex, 1);
